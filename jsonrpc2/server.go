@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/rpc"
 	"sync"
+	"strings"
 )
 
 type serverCodec struct {
@@ -154,6 +155,9 @@ func (c *serverCodec) ReadRequestHeader(r *rpc.Request) (err error) {
 	}
 
 	r.ServiceMethod = c.req.Method
+	if !strings.Contains(r.ServiceMethod, ".") {
+		r.ServiceMethod = "default." + strings.Title(r.ServiceMethod)
+	}
 
 	// JSON request id can be any JSON value;
 	// RPC package expects uint64.  Translate to
